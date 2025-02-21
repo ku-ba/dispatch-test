@@ -1,0 +1,22 @@
+on:
+  repository_dispatch:
+    types: [ok-to-test-command]
+  pull_request:
+name: tests
+
+jobs:
+  all-tests:
+    name: all-tests
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'repository_dispatch') || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+    steps:
+      - id: verify_checkout
+        run: |
+          echo \"${{ github.event.client_payload.pull_request.head.sha }}\"
+          echo \"${{ github.event.client_payload.slash_command.args.named.sha }}\"
+
+      - uses: actions/checkout@v3
+
+      - name: show
+        run: |
+          cat test.txt
